@@ -51,7 +51,6 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 body {
@@ -60,9 +59,8 @@ body {
   color: var(--ink);
   min-height: 100vh;
   line-height: 1.6;
-  overflow-x: hidden;
-  /* 禁止 iOS 弹性滚动 */
-  overscroll-behavior: none;
+  /* 确保移动端正常滚动 */
+  -webkit-overflow-scrolling: touch;
 }
 
 #root {
