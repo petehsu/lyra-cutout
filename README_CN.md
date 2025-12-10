@@ -14,6 +14,7 @@
 
 <p align="center">
   <a href="README.md">🇺🇸 English</a> •
+  <a href="https://lyracutouter.vercel.app/" target="_blank">🌟 在线演示</a> •
   <a href="#功能特点">功能特点</a> •
   <a href="#快速开始">快速开始</a> •
   <a href="#使用指南">使用指南</a> •
