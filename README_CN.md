@@ -23,13 +23,19 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-CC--BY--NC--SA--4.0-blue.svg" alt="License">
-  <img src="https://img.shields.io/badge/React-18.3-61dafb.svg" alt="React">
-  <img src="https://img.shields.io/badge/Vite-6.0-646cff.svg" alt="Vite">
-  <a href="https://lyra-cutout.pages.dev/"><img src="https://img.shields.io/website?url=https%3A%2F%2Flyra-cutout.pages.dev%2F&up_message=online&down_message=offline&label=Demo" alt="Website Status"></a>
+  <img src="https://img.shields.io/badge/React-18.3-61dafb.svg?logo=react&logoColor=white" alt="React">
+  <img src="https://img.shields.io/badge/Vite-6.0-646cff.svg?logo=vite&logoColor=white" alt="Vite">
 </p>
 
 <p align="center">
-  <a href="https://deploy.cloudflare.com/?url=https://github.com/petehsu/lyra-cutout"><img src="https://deploy.cloudflare.com/button" alt="Deploy to Cloudflare Pages" height="30"></a>
+  <!-- Live Demo Badge -->
+  <a href="https://lyra-cutout.pages.dev/" target="_blank">
+    <img src="https://img.shields.io/website?url=https%3A%2F%2Flyra-cutout.pages.dev%2F&up_message=%E5%9C%A8%E7%BA%BF&down_message=%E7%A6%BB%E7%BA%BF&label=%E5%9C%A8%E7%BA%BF%E6%BC%94%E7%A4%BA&style=for-the-badge&logo=vercel&logoColor=white&color=success" alt="Live Demo">
+  </a>
+  <!-- Deploy Badge -->
+  <a href="https://deploy.cloudflare.com/?url=https://github.com/petehsu/lyra-cutout" target="_blank">
+    <img src="https://img.shields.io/badge/%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2-Cloudflare%20Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Deploy to Cloudflare Pages">
+  </a>
 </p>
 
 ---
