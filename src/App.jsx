@@ -3,6 +3,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { removeBackgroundWithAdobe } from './adobeService.js';
 import BatchCrop from './components/BatchCrop';
+import BingGenerator from './components/BingGenerator';
 import logoSvg from './logo.svg';
 
 const BRAND = 'Lyra Cutout';
@@ -230,7 +231,7 @@ export default function App() {
 
 
   return (
-    <div className={`app-shell ${activeTab === 'crop' ? 'full-width-mode' : ''}`}>
+    <div className={`app-shell ${(activeTab === 'crop' || activeTab === 'lab') ? 'full-width-mode' : ''}`}>
       {/* 左侧：主功能区 */}
       <div className="main-content">
         {/* 页头 */}
@@ -252,6 +253,12 @@ export default function App() {
             onClick={() => setActiveTab('crop')}
           >
             批量裁剪
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'lab' ? 'active' : ''}`}
+            onClick={() => setActiveTab('lab')}
+          >
+            AI 绘图 (Beta)
           </button>
         </div>
 
@@ -407,6 +414,9 @@ export default function App() {
 
         {/* 批量裁剪模块 */}
         {activeTab === 'crop' && <BatchCrop />}
+
+        {/* AI 绘图实验室 */}
+        {activeTab === 'lab' && <BingGenerator />}
       </div>
 
       {/* 右侧：品牌展示区 (仅在抠图模式显示) */}

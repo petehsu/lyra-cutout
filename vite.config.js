@@ -21,6 +21,20 @@ export default defineConfig({
           'Referer': 'https://quick-actions.express.adobe.com/',
         },
       },
+      // Bing Image Creator Proxy
+      '/bing-proxy': {
+        target: 'https://www.bing.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/bing-proxy/, ''),
+        headers: {
+          'Origin': 'https://www.bing.com',
+          'Referer': 'https://www.bing.com/images/create',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
+        },
+        cookieDomainRewrite: {
+          '*': ''
+        }
+      },
       // Proxy Adobe Token API
       '/adobe-token': {
         target: 'https://adobeid-na1.services.adobe.com',
