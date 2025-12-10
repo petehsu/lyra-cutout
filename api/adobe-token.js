@@ -26,11 +26,26 @@ export default async function handler(req, res) {
     'Cache-Control': 'no-cache',
   };
 
+  // 2. 关键修复：Vercel 会自动解析 x-www-form-urlencoded 为对象
+  // 我们需要把它转回 string 才能发给 fetch
+  let body = req.body;
+
+  if (req.method === 'POST') {
+    if (typeof req.body === 'object' && req.body !== null) {
+      // 如果 Vercel 已经解析了 body，我们需要转回 url-encoded string
+      // 例如：{ guest_allowed: 'true' } -> "guest_allowed=true"
+      body = new URLSearchParams(req.body).toString();
+    } else if (typeof req.body === 'string') {
+      // 如果没解析，或者是 raw body
+      body = req.body;
+    }
+  }
+
   try {
     const response = await fetch(targetUrl, {
       method: req.method,
       headers: headers,
-      body: req.method === 'POST' ? req.body : undefined,
+      body: body,
     });
 
     const data = await response.text();
