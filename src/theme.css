@@ -777,41 +777,38 @@ input::placeholder {
    ======================================== */
 .tab-nav {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
   border-bottom: 2px solid var(--line);
-  padding-bottom: 2px;
-  margin-bottom: 24px;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
 }
 
 .tab-btn {
-  background: none;
+  background: var(--paper-2);
   border: none;
-  padding: 8px 16px;
-  font-size: 16px;
-  font-weight: 700;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--muted);
   cursor: pointer;
-  position: relative;
+  border-radius: var(--radius-sm);
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .tab-btn:hover {
   color: var(--ink);
+  background: var(--paper-3);
 }
 
 .tab-btn.active {
-  color: #4a3a25;
+  color: white;
+  background: var(--accent-strong);
 }
 
 .tab-btn.active::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--accent-strong);
-  border-radius: 2px;
+  display: none;
 }
 
 .item-index {
@@ -1137,4 +1134,544 @@ input::placeholder {
 .input-field:focus {
   outline: none;
   border-color: var(--accent-strong);
+}
+
+/* ========================================
+   Image Stitcher Module
+   ======================================== */
+.stitcher-content {
+  min-height: 300px;
+}
+
+.stitcher-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+}
+
+.stitcher-list h4 {
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  color: var(--ink-2);
+}
+
+.stitcher-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  background: var(--paper-2);
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+}
+
+.item-order {
+  font-weight: 700;
+  color: var(--ink-2);
+  min-width: 20px;
+}
+
+.stitcher-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.stitcher-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.stitcher-item-name {
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stitcher-item-size {
+  font-size: 0.75rem;
+  color: var(--ink-2);
+}
+
+.stitcher-item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.stitcher-item-actions button {
+  padding: 4px 8px;
+  background: var(--paper-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.stitcher-preview {
+  background: var(--paper-2);
+  border-radius: var(--radius-lg);
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+.stitcher-result {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.stitcher-placeholder {
+  color: var(--ink-2);
+}
+
+/* ========================================
+   Privacy Mosaic Module
+   ======================================== */
+.mosaic-content {
+  min-height: 400px;
+}
+
+.mosaic-canvas-wrapper {
+  text-align: center;
+}
+
+.mosaic-tip {
+  margin-bottom: 12px;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+
+.mosaic-canvas {
+  cursor: crosshair;
+  border-radius: var(--radius-lg);
+  max-width: 100%;
+}
+
+/* ========================================
+   Watermark Module
+   ======================================== */
+.watermark-content {
+  min-height: 300px;
+}
+
+.watermark-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.watermark-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--paper-2);
+}
+
+.watermark-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.watermark-item .del-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.watermark-item-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========================================
+   Compressor & Converter Tables
+   ======================================== */
+.compress-summary,
+.resize-table,
+.compress-table {
+  margin-bottom: 16px;
+}
+
+.compress-summary {
+  padding: 12px;
+  background: var(--accent-soft);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.compress-table table,
+.resize-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.compress-table th,
+.compress-table td,
+.resize-table th,
+.resize-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--paper-2);
+}
+
+.compress-table th,
+.resize-table th {
+  background: var(--paper-2);
+  font-weight: 600;
+}
+
+.text-success {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.compress-name,
+.resize-name {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ========================================
+   Format Converter
+   ======================================== */
+.converter-content {
+  min-height: 300px;
+}
+
+.converter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.converter-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: var(--paper-2);
+  border-radius: var(--radius-md);
+}
+
+.converter-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.converter-info {
+  flex: 1;
+}
+
+.converter-name {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.converter-change {
+  font-size: 0.85rem;
+}
+
+.format-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: var(--paper-3);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.format-badge.active {
+  background: var(--accent-strong);
+  color: white;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  background: var(--paper-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* ========================================
+   EXIF Viewer
+   ======================================== */
+.exif-content {
+  min-height: 300px;
+}
+
+.exif-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.exif-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-2);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+
+.exif-preview img {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+.exif-data {
+  background: var(--paper-2);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+
+.exif-table {
+  width: 100%;
+}
+
+.exif-table td {
+  padding: 8px;
+  border-bottom: 1px solid var(--paper-3);
+}
+
+.exif-key {
+  font-weight: 600;
+  color: var(--ink-2);
+  width: 40%;
+}
+
+/* ========================================
+   Before/After Compare
+   ======================================== */
+.compare-content {
+  min-height: 400px;
+}
+
+.compare-container {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  user-select: none;
+}
+
+.compare-after,
+.compare-before {
+  position: relative;
+}
+
+.compare-after img,
+.compare-before img {
+  display: block;
+  width: 100%;
+}
+
+.compare-before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.compare-label {
+  position: absolute;
+  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.compare-label.before {
+  top: 12px;
+  left: 12px;
+}
+
+.compare-label.after {
+  top: 12px;
+  right: 12px;
+}
+
+.compare-slider {
+  position: absolute;
+  cursor: ew-resize;
+  z-index: 10;
+}
+
+.slider-line {
+  background: white;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+.slider-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   Collage
+   ======================================== */
+.collage-content {
+  min-height: 300px;
+}
+
+.collage-layout {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 20px;
+}
+
+.collage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.collage-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--paper-2);
+}
+
+.collage-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collage-item.add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 2rem;
+  color: var(--ink-2);
+}
+
+.collage-index {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.collage-preview {
+  background: var(--paper-2);
+  border-radius: var(--radius-lg);
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collage-preview img {
+  max-width: 100%;
+  max-height: 400px;
+}
+
+.collage-placeholder {
+  color: var(--ink-2);
+}
+
+/* ========================================
+   Steganography
+   ======================================== */
+.stego-content {
+  min-height: 300px;
+}
+
+.stego-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stego-preview {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  background: var(--paper-2);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+
+.stego-preview img {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+.stego-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #22c55e;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.stego-result {
+  background: var(--paper-2);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+
+.stego-result h4 {
+  margin-bottom: 8px;
+}
+
+.stego-message {
+  background: var(--paper-1);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.stego-info {
+  line-height: 1.6;
+}
+
+.stego-info p {
+  margin: 4px 0;
 }

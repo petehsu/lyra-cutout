@@ -6,6 +6,16 @@ import BatchCrop from './components/BatchCrop';
 import ColorAnalyzer from './components/ColorAnalyzer';
 import SmartCrop from './components/SmartCrop';
 import SmartRename from './components/SmartRename';
+import ImageStitcher from './components/ImageStitcher';
+import PrivacyMosaic from './components/PrivacyMosaic';
+import Watermark from './components/Watermark';
+import ImageCompressor from './components/ImageCompressor';
+import FormatConverter from './components/FormatConverter';
+import ImageResizer from './components/ImageResizer';
+import ExifViewer from './components/ExifViewer';
+import BeforeAfter from './components/BeforeAfter';
+import Collage from './components/Collage';
+import Steganography from './components/Steganography';
 import logoSvg from './logo.svg';
 
 const BRAND = 'Lyra Cutout';
@@ -244,35 +254,50 @@ export default function App() {
 
         {/* Tab 导航 */}
         <div className="tab-nav">
-          <button
-            className={`tab-btn ${activeTab === 'remove' ? 'active' : ''}`}
-            onClick={() => setActiveTab('remove')}
-          >
-            智能抠图
+          <button className={`tab-btn ${activeTab === 'remove' ? 'active' : ''}`} onClick={() => setActiveTab('remove')}>
+            🎨 智能抠图
           </button>
-          <button
-            className={`tab-btn ${activeTab === 'crop' ? 'active' : ''}`}
-            onClick={() => setActiveTab('crop')}
-          >
-            批量裁剪
+          <button className={`tab-btn ${activeTab === 'crop' ? 'active' : ''}`} onClick={() => setActiveTab('crop')}>
+            ✂️ 批量裁剪
           </button>
-          <button
-            className={`tab-btn ${activeTab === 'color' ? 'active' : ''}`}
-            onClick={() => setActiveTab('color')}
-          >
-            色彩分析
+          <button className={`tab-btn ${activeTab === 'color' ? 'active' : ''}`} onClick={() => setActiveTab('color')}>
+            🎨 色彩分析
           </button>
-          <button
-            className={`tab-btn ${activeTab === 'smartcrop' ? 'active' : ''}`}
-            onClick={() => setActiveTab('smartcrop')}
-          >
-            智能构图
+          <button className={`tab-btn ${activeTab === 'smartcrop' ? 'active' : ''}`} onClick={() => setActiveTab('smartcrop')}>
+            📐 智能构图
           </button>
-          <button
-            className={`tab-btn ${activeTab === 'rename' ? 'active' : ''}`}
-            onClick={() => setActiveTab('rename')}
-          >
-            智能重命名
+          <button className={`tab-btn ${activeTab === 'rename' ? 'active' : ''}`} onClick={() => setActiveTab('rename')}>
+            📝 智能重命名
+          </button>
+          <button className={`tab-btn ${activeTab === 'stitch' ? 'active' : ''}`} onClick={() => setActiveTab('stitch')}>
+            📸 长图拼接
+          </button>
+          <button className={`tab-btn ${activeTab === 'mosaic' ? 'active' : ''}`} onClick={() => setActiveTab('mosaic')}>
+            🔲 隐私马赛克
+          </button>
+          <button className={`tab-btn ${activeTab === 'watermark' ? 'active' : ''}`} onClick={() => setActiveTab('watermark')}>
+            💧 批量水印
+          </button>
+          <button className={`tab-btn ${activeTab === 'compress' ? 'active' : ''}`} onClick={() => setActiveTab('compress')}>
+            📊 图片压缩
+          </button>
+          <button className={`tab-btn ${activeTab === 'convert' ? 'active' : ''}`} onClick={() => setActiveTab('convert')}>
+            🔄 格式转换
+          </button>
+          <button className={`tab-btn ${activeTab === 'resize' ? 'active' : ''}`} onClick={() => setActiveTab('resize')}>
+            📏 尺寸调整
+          </button>
+          <button className={`tab-btn ${activeTab === 'exif' ? 'active' : ''}`} onClick={() => setActiveTab('exif')}>
+            🔍 EXIF查看
+          </button>
+          <button className={`tab-btn ${activeTab === 'compare' ? 'active' : ''}`} onClick={() => setActiveTab('compare')}>
+            🎭 图片对比
+          </button>
+          <button className={`tab-btn ${activeTab === 'collage' ? 'active' : ''}`} onClick={() => setActiveTab('collage')}>
+            🧩 拼贴画
+          </button>
+          <button className={`tab-btn ${activeTab === 'stego' ? 'active' : ''}`} onClick={() => setActiveTab('stego')}>
+            🔐 图片隐写
           </button>
         </div>
 
@@ -437,6 +462,36 @@ export default function App() {
 
         {/* 智能重命名模块 */}
         {activeTab === 'rename' && <SmartRename />}
+
+        {/* 长图拼接模块 */}
+        {activeTab === 'stitch' && <ImageStitcher />}
+
+        {/* 隐私马赛克模块 */}
+        {activeTab === 'mosaic' && <PrivacyMosaic />}
+
+        {/* 批量水印模块 */}
+        {activeTab === 'watermark' && <Watermark />}
+
+        {/* 图片压缩模块 */}
+        {activeTab === 'compress' && <ImageCompressor />}
+
+        {/* 格式转换模块 */}
+        {activeTab === 'convert' && <FormatConverter />}
+
+        {/* 尺寸调整模块 */}
+        {activeTab === 'resize' && <ImageResizer />}
+
+        {/* EXIF 查看模块 */}
+        {activeTab === 'exif' && <ExifViewer />}
+
+        {/* 图片对比模块 */}
+        {activeTab === 'compare' && <BeforeAfter />}
+
+        {/* 拼贴画模块 */}
+        {activeTab === 'collage' && <Collage />}
+
+        {/* 图片隐写模块 */}
+        {activeTab === 'stego' && <Steganography />}
       </div>
 
       {/* 右侧：品牌展示区 */}
@@ -446,53 +501,27 @@ export default function App() {
         </div>
         <h2 className="brand-title">{BRAND}</h2>
         <p className="brand-tagline">
-          {activeTab === 'remove' && <>{BRAND_TAGLINE}<br />批量移除图片背景，一键导出透明 PNG</>}
-          {activeTab === 'crop' && <>批量图片裁剪工具<br />统一比例，关联调整，高效处理</>}
-          {activeTab === 'color' && <>色彩和谐分析器<br />提取主色调，分析配色方案</>}
-          {activeTab === 'smartcrop' && <>AI 智能构图裁剪<br />自动识别主体，推荐最佳构图</>}
-          {activeTab === 'rename' && <>批量智能重命名<br />AI 识别内容，自动生成文件名</>}
+          {activeTab === 'remove' && <>{BRAND_TAGLINE}<br />批量移除图片背景</>}
+          {activeTab === 'crop' && <>批量裁剪工具<br />统一比例，高效处理</>}
+          {activeTab === 'color' && <>色彩和谐分析器<br />提取主色调</>}
+          {activeTab === 'smartcrop' && <>AI 智能构图<br />自动识别主体</>}
+          {activeTab === 'rename' && <>智能重命名<br />AI 识别内容</>}
+          {activeTab === 'stitch' && <>长图拼接<br />截图拼接神器</>}
+          {activeTab === 'mosaic' && <>隐私马赛克<br />保护敏感信息</>}
+          {activeTab === 'watermark' && <>批量水印<br />版权保护利器</>}
+          {activeTab === 'compress' && <>图片压缩<br />减小文件体积</>}
+          {activeTab === 'convert' && <>格式转换<br />PNG/JPG/WebP</>}
+          {activeTab === 'resize' && <>尺寸调整<br />批量缩放图片</>}
+          {activeTab === 'exif' && <>EXIF 查看器<br />查看/清除元数据</>}
+          {activeTab === 'compare' && <>图片对比<br />Before/After 滑块</>}
+          {activeTab === 'collage' && <>拼贴画<br />九宫格/多布局</>}
+          {activeTab === 'stego' && <>图片隐写术<br />隐藏秘密信息</>}
         </p>
         <div className="brand-features">
-          {activeTab === 'remove' && (
-            <>
-              <div className="brand-feature"><span className="brand-feature-icon">⚡</span><span>10 张并发，极速处理</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">🎨</span><span>多引擎支持，自由选择</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">📦</span><span>批量下载，保留原名</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">🔒</span><span>本地处理，隐私安全</span></div>
-            </>
-          )}
-          {activeTab === 'crop' && (
-            <>
-              <div className="brand-feature"><span className="brand-feature-icon">✂️</span><span>专业预设比例</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">🔗</span><span>关联调整，同步所有图片</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">📦</span><span>打包下载，保留原名</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">🔒</span><span>浏览器本地处理</span></div>
-            </>
-          )}
-          {activeTab === 'color' && (
-            <>
-              <div className="brand-feature"><span className="brand-feature-icon">🎨</span><span>主色调自动提取</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">🌈</span><span>配色和谐度评分</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">📋</span><span>一键复制色值</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">📤</span><span>导出调色板</span></div>
-            </>
-          )}
-          {activeTab === 'smartcrop' && (
-            <>
-              <div className="brand-feature"><span className="brand-feature-icon">🤖</span><span>AI 主体识别</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">📐</span><span>黄金分割/三分法</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">📱</span><span>多尺寸候选</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">🔒</span><span>完全本地推理</span></div>
-            </>
-          )}
-          {activeTab === 'rename' && (
-            <>
-              <div className="brand-feature"><span className="brand-feature-icon">🧠</span><span>AI 内容识别</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">📝</span><span>语义化命名</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">📦</span><span>批量打包下载</span></div>
-              <div className="brand-feature"><span className="brand-feature-icon">🔒</span><span>完全本地推理</span></div>
-            </>
-          )}
+          <div className="brand-feature"><span className="brand-feature-icon">🆓</span><span>完全免费</span></div>
+          <div className="brand-feature"><span className="brand-feature-icon">🔒</span><span>本地处理</span></div>
+          <div className="brand-feature"><span className="brand-feature-icon">📦</span><span>批量操作</span></div>
+          <div className="brand-feature"><span className="brand-feature-icon">⚡</span><span>极速处理</span></div>
         </div>
       </aside>
     </div>
