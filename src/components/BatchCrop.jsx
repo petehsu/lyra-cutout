@@ -112,6 +112,12 @@ const BatchCrop = () => {
         });
     };
 
+    // 使用 Ref 追踪最新的 currentImage，避免闭包陷阱
+    const currentImageRef = useRef(currentImage);
+    useEffect(() => {
+        currentImageRef.current = currentImage;
+    }, [currentImage]);
+
     // 强制应用比例变化
     useEffect(() => {
         if (!currentImage || !cropperRef.current) return;
@@ -124,36 +130,31 @@ const BatchCrop = () => {
         if (!currentImage || !cropperRef.current) return;
         const cropper = cropperRef.current.cropper;
         const data = cropper.getData();
-        const canvasData = cropper.getCanvasData(); // 视觉相关
 
         // 更新当前图片数据
         updateImage(selectedIndex, { cropData: data });
 
         // 关联同步逻辑：位置同步
         if (isSync) {
+            const imgData = cropper.getImageData();
+            // 防御性检查：确保有尺寸数据
+            if (!imgData.naturalWidth || !imgData.naturalHeight) return;
+
             // 计算相对位置（百分比）
             const relativeData = {
-                x: data.x / cropper.getImageData().naturalWidth,
-                y: data.y / cropper.getImageData().naturalHeight,
-                width: data.width / cropper.getImageData().naturalWidth,
-                height: data.height / cropper.getImageData().naturalHeight,
+                x: data.x / imgData.naturalWidth,
+                y: data.y / imgData.naturalHeight,
+                width: data.width / imgData.naturalWidth,
+                height: data.height / imgData.naturalHeight,
             };
 
             setImages((prev) =>
                 prev.map((img, idx) => {
-                    if (idx === selectedIndex) return img; // 已更新
-                    if (!img.cropData && !relativeData) return img; // 没加载过的不处理？
-                    // 注意：未展示过的图片没有 cropper 实例，无法直接 setData。
-                    // 策略：我们只存 relativeData，等到该图片渲染时，再计算出 absolute data。
+                    if (idx === selectedIndex) return img; // 当前图不动
                     return {
                         ...img,
-                        relativeCropData: relativeData, // 存这个新字段
-                        // 如果它也有 absolute cropData (曾经编辑过)，我们需要标记它“脏”了或者直接更新？
-                        // 简单起见，既然是 Sync，我们就尽量同步。
-                        // 但如果图片未加载 natural 尺寸，我们也算不出来。
-                        // 妥协：这里的 Sync 主要同步 AspectRatio。 "位置同步" 对于批量张数多且尺寸不一的场景非常难做完美。
-                        // 用户要求： “调整一张...都会一起被调整”。
-                        // 我们存 `relativeCropData`，在 Cropper `ready` 时应用。
+                        relativeCropData: relativeData, // 只有非当前图才会被标记需要同步
+                        cropData: null, // 清除绝对数据，强迫它下次加载时使用 relativeData 计算
                     };
                 })
             );
@@ -162,21 +163,24 @@ const BatchCrop = () => {
 
     // 图片加载完成时（包括切换图片时）
     const onCropperReady = () => {
-        if (!currentImage || !cropperRef.current) return;
+        if (!cropperRef.current) return;
+        const img = currentImageRef.current; // 从 Ref 获取最新状态
+        if (!img) return;
+
         const cropper = cropperRef.current.cropper;
+        const imgData = cropper.getImageData(); // 确保此时已拿到新图尺寸
 
         // 如果有相对位置数据（来自同步），应用它
-        if (currentImage.relativeCropData) {
-            const imgData = cropper.getImageData();
+        if (img.relativeCropData) {
             const newData = {
-                x: currentImage.relativeCropData.x * imgData.naturalWidth,
-                y: currentImage.relativeCropData.y * imgData.naturalHeight,
-                width: currentImage.relativeCropData.width * imgData.naturalWidth,
-                height: currentImage.relativeCropData.height * imgData.naturalHeight,
+                x: img.relativeCropData.x * imgData.naturalWidth,
+                y: img.relativeCropData.y * imgData.naturalHeight,
+                width: img.relativeCropData.width * imgData.naturalWidth,
+                height: img.relativeCropData.height * imgData.naturalHeight,
             };
             cropper.setData(newData);
-        } else if (currentImage.cropData) {
-            cropper.setData(currentImage.cropData);
+        } else if (img.cropData) {
+            cropper.setData(img.cropData);
         }
     };
 
