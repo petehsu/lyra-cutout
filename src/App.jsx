@@ -228,7 +228,7 @@ export default function App() {
     saveAs(content, 'lyra-outputs.zip');
   };
 
-  return (
+
   return (
     <div className={`app-shell ${activeTab === 'crop' ? 'full-width-mode' : ''}`}>
       {/* 左侧：主功能区 */}
