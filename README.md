@@ -182,6 +182,43 @@ python -c "import onnxruntime; print(onnxruntime.get_device())"
 
 ---
 
+## 🔬 Technical Implementation (Adobe Method)
+
+A key feature of this project is the integration of the Adobe Express free background removal API via reverse engineering.
+
+### 1. Anonymous Authentication (Guest Token)
+
+Adobe Express allows guest usage. By analyzing network traffic, we identified an OAuth guest flow:
+- **Endpoint**: `POST /ims/check/v6/token`
+- **Params**: `guest_allowed=true`, `client_id=quickactions_hz_webapp`
+- **Result**: Obtains a temporary `access_token`.
+
+### 2. CORS & Request Forgery (Vite Proxy)
+
+Direct browser calls to Adobe APIs fail due to CORS. The project uses Vite's proxy (`vite.config.js`) to:
+- Forward frontend requests from `/adobe-api` to `https://sensei.adobe.io`.
+- Inject necessary headers to spoof the origin:
+  - `Origin: https://quick-actions.express.adobe.com`
+  - `Referer: https://quick-actions.express.adobe.com/`
+
+### 3. Sensei API Interaction
+
+The Adobe Sensei API returns a **Mask** (black & white image) instead of a transparent PNG.
+- **Request**: `multipart/form-data` with JSON config and the source image.
+- **Response**: A multipart response containing the mask as a JPEG.
+
+### 4. Client-Side Composition
+
+The final transparent image is composited entirely in the browser using the Canvas API:
+1. Draw original image to Canvas.
+2. Fetch the Mask image pixel data.
+3. Update the Alpha channel of the original image based on the Mask's grayscale values (Black = Transparent, White = Opaque).
+4. Export as PNG Blob.
+
+This approach leverages Adobe's powerful AI while keeping image processing client-side (via proxy), ensuring privacy and speed.
+
+---
+
 ## 🏗️ Project Structure
 
 ```

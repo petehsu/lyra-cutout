@@ -180,7 +180,50 @@ pip install rembg[gpu] onnxruntime-gpu
 python -c "import onnxruntime; print(onnxruntime.get_device())"
 ```
 
-#### 常见问题
+---
+
+## 🔬 技术实现原理 (Adobe 方案)
+
+本项目的一个核心亮点是逆向并集成了 Adobe Express 的免费抠图 API。实现流程如下：
+
+### 1. 匿名认证 (Guest Token)
+
+Adobe Express 允许未登录用户试用。通过分析网络请求，发现其使用 OAuth 访客模式：
+
+- **端点**: `POST /ims/check/v6/token`
+- **参数**: `guest_allowed=true`, `client_id=quickactions_hz_webapp`
+- **结果**: 获取一个临时的 `access_token`，有效期通常为 24 小时。
+
+### 2. CORS 与请求伪造 (Vite Proxy)
+
+直接在浏览器调用 Adobe API 会触发 CORS 错误，且无法修改 `Origin` 和 `Referer` 头。
+项目利用 Vite 的代理功能 (`vite.config.js`)：
+
+- 前端请求 `/adobe-api` → 代理转发至 `https://sensei.adobe.io`
+- 代理服务器自动注入以下 Headers 欺骗服务器：
+  - `Origin: https://quick-actions.express.adobe.com`
+  - `Referer: https://quick-actions.express.adobe.com/`
+
+### 3. Sensei API 交互
+
+Adobe Sensei API 不直接返回透明 PNG，而是返回原图的 **Mask（遮罩层）**。
+
+- **请求**: `multipart/form-data`，包含 JSON 配置 (`contentAnalyzerRequests`) 和图片文件。
+- **响应**: 一个多部分响应，其中一部分是 JPEG 格式的黑白 Mask 图片。
+
+### 4. 前端图像合成
+
+最终的透明图片完全在浏览器端通过 Canvas API 合成：
+
+1. 创建 `<canvas>`，尺寸与原图一致。
+2. 绘制原图到 Canvas。
+3. 获取 Mask 图片的像素数据。
+4. 遍历像素，将原图 Alpha 通道根据 Mask 的灰度值进行更新（黑色=透明，白色=保留）。
+5. 导出为 PNG Blob。
+
+这种方式既利用了 Adobe 强大的 AI 能力，又避免了将原图暴露给非官方的后端服务，最大程度保证了隐私和速度。
+
+---#### 常见问题
 
 **Q: rembg 服务器启动失败？**
 ```bash
