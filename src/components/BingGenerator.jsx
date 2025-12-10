@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { saveAs } from 'file-saver'; // 复用已有的库
-import JSZip from 'jszip';
+import React, { useState, useEffect } from 'react';
+// import { saveAs } from 'file-saver'; // 复用已有的库 - Removed as per diff
+// import JSZip from 'jszip'; - Removed as per diff
 
 const BingGenerator = () => {
     // 状态管理
@@ -10,6 +10,7 @@ const BingGenerator = () => {
     const [logs, setLogs] = useState([]); // 日志/状态信息
     const [images, setImages] = useState([]); // 生成结果 URL 列表
     const [error, setError] = useState(null);
+    const [showTutorial, setShowTutorial] = useState(false); // Added as per diff
 
     // 持久化 Cookie
     useEffect(() => {
@@ -18,6 +19,20 @@ const BingGenerator = () => {
 
     const addLog = (msg) => {
         setLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
+    };
+
+    // 智能处理 Cookie 输入：支持完整 Cookie 字符串或单独的 _U 值 - Added as per diff
+    const handleCookieChange = (e) => {
+        let input = e.target.value.trim();
+
+        // 如果输入包含 "_U=" 说明是完整的 Cookie 字符串，尝试提取
+        if (input.includes('_U=')) {
+            const match = input.match(/_U=([^;]+)/);
+            if (match) {
+                input = match[1];
+            }
+        }
+        setCookie(input);
     };
 
     // 核心生成逻辑
@@ -37,7 +52,7 @@ const BingGenerator = () => {
         try {
             // 1. 构造请求 URL
             // 注意：Vite 代理前缀是 /bing-proxy
-            const baseUrl = import.meta.env.DEV ? '/bing-proxy' : '/bing-proxy';
+            const baseUrl = '/bing-proxy'; // Simplified as per diff
             const query = new URLSearchParams({
                 q: prompt,
                 rt: '4',
@@ -85,7 +100,7 @@ const BingGenerator = () => {
                 // 这种情况下通常是 Cookie 失效或 IP 被封
                 addLog('收到非 JSON 响应，可能 Cookie 无效或需要验证');
                 // 简单的错误检测
-                if (text.includes('拒绝访问') || text.includes('Sign in')) {
+                if (text.includes('拒绝访问') || text.includes('Sign in') || text.includes('login')) { // Added 'login' as per diff
                     throw new Error('Cookie 无效或已过期，请重新获取');
                 }
                 throw new Error('未收到预期的重定向响应');
@@ -132,7 +147,7 @@ const BingGenerator = () => {
 
             // 简单的正则匹配所有结果图片
             // 这里的图片通常是 jpeg 格式
-            const imgRegex = /src="([^"]+)"/g;
+            // const imgRegex = /src="([^"]+)"/g; // Original regex
             const foundImages = [];
             let match;
 
@@ -176,24 +191,95 @@ const BingGenerator = () => {
                 <h2 className="section-title">🧪 Bing Image Creator (Beta)</h2>
 
                 <div className="control-section">
+                    {/* Cookie 输入区 - Updated as per diff */}
                     <div className="control-row">
                         <label className="input-label">Cookie (_U):</label>
                         <input
                             type="password"
                             className="text-input"
-                            placeholder="粘贴你的 Bing _U Cookie"
+                            placeholder="粘贴 _U 值或完整 Cookie 字符串"
                             value={cookie}
-                            onChange={(e) => setCookie(e.target.value)}
+                            onChange={handleCookieChange} // Changed to new handler
                         />
-                        <span className="file-zone-hint" style={{ fontSize: '12px' }}>需要从 www.bing.com 登录后获取 Cookie (Value of _U)</span>
+                        <button
+                            className="btn-secondary"
+                            style={{ marginTop: '8px', fontSize: '12px' }}
+                            onClick={() => setShowTutorial(!showTutorial)}
+                        >
+                            {showTutorial ? '📖 收起教程' : '❓ 如何获取 Cookie？'}
+                        </button>
                     </div>
 
+                    {/* 可折叠的详细教程 - Added as per diff */}
+                    {showTutorial && (
+                        <div className="tutorial-box" style={{
+                            background: 'var(--paper-2)',
+                            padding: '16px',
+                            borderRadius: '12px',
+                            marginTop: '12px',
+                            marginBottom: '16px',
+                            fontSize: '14px',
+                            lineHeight: '1.8'
+                        }}>
+                            <h4 style={{ marginTop: 0, marginBottom: '12px', color: 'var(--accent-strong)' }}>📝 获取 Bing Cookie 步骤</h4>
+
+                            <div style={{ marginBottom: '16px' }}>
+                                <strong>步骤 1：登录 Bing</strong>
+                                <p style={{ margin: '4px 0', color: 'var(--muted)' }}>
+                                    打开 <a href="https://www.bing.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-strong)' }}>www.bing.com</a>，
+                                    点击右上角登录你的 <strong>Microsoft 账号</strong>。
+                                </p>
+                            </div>
+
+                            <div style={{ marginBottom: '16px' }}>
+                                <strong>步骤 2：打开开发者工具</strong>
+                                <p style={{ margin: '4px 0', color: 'var(--muted)' }}>
+                                    按下 <code style={{ background: '#e0d9c8', padding: '2px 6px', borderRadius: '4px' }}>F12</code> 或
+                                    <code style={{ background: '#e0d9c8', padding: '2px 6px', borderRadius: '4px' }}>Ctrl + Shift + I</code> (Mac: <code style={{ background: '#e0d9c8', padding: '2px 6px', borderRadius: '4px' }}>Cmd + Option + I</code>)
+                                </p>
+                            </div>
+
+                            <div style={{ marginBottom: '16px' }}>
+                                <strong>步骤 3：找到 Cookie</strong>
+                                <p style={{ margin: '4px 0', color: 'var(--muted)' }}>
+                                    方法 A (推荐)：点击顶部的 <strong>「Application」</strong> 标签 → 左侧 <strong>「Cookies」</strong> → <strong>「www.bing.com」</strong> → 找到 <code style={{ background: '#e0d9c8', padding: '2px 6px', borderRadius: '4px' }}>_U</code>，复制它的 <strong>Value</strong>。
+                                </p>
+                                <p style={{ margin: '4px 0', color: 'var(--muted)' }}>
+                                    方法 B：点击 <strong>「Network」</strong> 标签 → 刷新页面 → 点击任意请求 → 找到 <strong>「Request Headers」</strong> 中的 <code style={{ background: '#e0d9c8', padding: '2px 6px', borderRadius: '4px' }}>Cookie</code>，复制整行（本工具会自动提取 _U）。
+                                </p>
+                            </div>
+
+                            <div style={{ marginBottom: '8px' }}>
+                                <strong>步骤 4：粘贴到上方输入框</strong>
+                                <p style={{ margin: '4px 0', color: 'var(--muted)' }}>
+                                    将复制的内容粘贴到上方输入框。Cookie 会自动保存，下次访问无需重复操作。
+                                </p>
+                            </div>
+
+                            <div style={{
+                                background: 'rgba(211, 178, 96, 0.2)',
+                                padding: '10px 12px',
+                                borderRadius: '8px',
+                                marginTop: '12px',
+                                borderLeft: '3px solid var(--accent)'
+                            }}>
+                                <strong>⚠️ 注意事项</strong>
+                                <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px', color: 'var(--muted)' }}>
+                                    <li>Cookie 有效期约 1-2 周，过期后需重新获取</li>
+                                    <li>请勿分享你的 Cookie，它等同于登录凭证</li>
+                                    <li>如遇到"验证码"提示，请在 Bing 官网完成验证后重试</li>
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Prompt 输入区 - Updated as per diff */}
                     <div className="control-row">
                         <label className="input-label">Prompt:</label>
                         <textarea
                             className="text-input"
                             rows={3}
-                            placeholder="描述你想生成的画面..."
+                            placeholder="描述你想生成的画面... (英文效果更佳)" // Updated placeholder
                             value={prompt}
                             onChange={(e) => setPrompt(e.target.value)}
                             style={{ resize: 'vertical' }}
@@ -212,33 +298,66 @@ const BingGenerator = () => {
 
                     {error && (
                         <div className="error-message" style={{ color: 'var(--error)', marginTop: '10px' }}>
-                            {error}
+                            ❌ {error} {/* Added ❌ as per diff */}
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* 状态日志区 */}
-            {isGenerating && (
-                <div className="status-log" style={{ background: 'var(--paper-2)', padding: '10px', borderRadius: '8px', marginBottom: '20px', fontFamily: 'monospace', fontSize: '12px', color: 'var(--muted)' }}>
+            {/* 状态日志区 - Updated as per diff */}
+            {logs.length > 0 && ( // Changed condition from isGenerating to logs.length > 0
+                <div className="status-log" style={{
+                    background: 'var(--paper-2)',
+                    padding: '12px', // Updated padding
+                    borderRadius: '8px',
+                    marginBottom: '20px',
+                    fontFamily: 'monospace',
+                    fontSize: '12px',
+                    color: 'var(--muted)',
+                    maxHeight: '150px', // Added maxHeight
+                    overflowY: 'auto' // Added overflowY
+                }}>
                     {logs.map((log, i) => <div key={i}>{log}</div>)}
                 </div>
             )}
 
-            {/* 结果展示区 */}
+            {/* 结果展示区 - Updated as per diff */}
             {images.length > 0 && (
-                <div className="results-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
+                <div className="results-grid" style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', // Updated minmax
+                    gap: '20px'
+                }}>
                     {images.map((url, idx) => (
-                        <div key={idx} className="result-card" style={{ background: 'white', padding: '10px', borderRadius: '12px', boxShadow: 'var(--shadow)' }}>
-                            <img src={url} alt={`Result ${idx}`} style={{ width: '100%', borderRadius: '8px', aspectRatio: '1/1', objectFit: 'cover' }} />
+                        <div key={idx} className="result-card" style={{
+                            background: 'white',
+                            padding: '12px', // Updated padding
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)' // Updated boxShadow
+                        }}>
+                            <img
+                                src={url}
+                                alt={`Result ${idx + 1}`} // Updated alt text
+                                style={{
+                                    width: '100%',
+                                    borderRadius: '8px',
+                                    aspectRatio: '1/1',
+                                    objectFit: 'cover'
+                                }}
+                            />
                             <a
                                 href={url}
                                 target="_blank"
-                                download={`bing-gen-${idx}.jpg`}
+                                rel="noopener noreferrer" // Added rel
                                 className="btn-secondary"
-                                style={{ display: 'block', marginTop: '10px', textAlign: 'center', textDecoration: 'none' }}
+                                style={{
+                                    display: 'block',
+                                    marginTop: '10px',
+                                    textAlign: 'center',
+                                    textDecoration: 'none'
+                                }}
                             >
-                                下载原图
+                                🔍 查看原图 {/* Updated text */}
                             </a>
                         </div>
                     ))}
