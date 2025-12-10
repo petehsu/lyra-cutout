@@ -5,19 +5,19 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
 // 预设比例
+// 预设比例
 const ASPECT_RATIOS = [
     { label: '自由调整', value: NaN },
     { label: '原始比例', value: 'ORIGINAL' },
-    { label: '1:1', value: 1 },
-    { label: '3:4', value: 3 / 4 },
-    { label: '4:3', value: 4 / 3 },
-    { label: '16:9', value: 16 / 9 },
-    { label: '9:16', value: 9 / 16 },
-    { label: '2:3', value: 2 / 3 },
-    { label: '3:2', value: 3 / 2 },
-    { label: '18:9', value: 2 },
-    { label: '9:18', value: 0.5 },
-    { label: '1.39:1 (证件)', value: 1.39 },
+    { label: '1:1 (正方形)', value: 1 },
+    { label: '4:3 (标准)', value: 4 / 3 },
+    { label: '3:4 (人像/证件)', value: 3 / 4 },
+    { label: '16:9 (宽屏)', value: 16 / 9 },
+    { label: '9:16 (手机)', value: 9 / 16 },
+    { label: '3:2 (单反)', value: 3 / 2 },
+    { label: '2:3 (小红书)', value: 2 / 3 },
+    { label: '2.35:1 (电影感)', value: 2.35 },
+    { label: '2:1 (全面屏)', value: 2 },
 ];
 
 const BatchCrop = () => {
