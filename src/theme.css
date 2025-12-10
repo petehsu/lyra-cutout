@@ -816,3 +816,18 @@ input::placeholder {
   grid-template-columns: 1fr !important;
   max-width: 100%;
 }
+
+.item-index {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  z-index: 2;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+}

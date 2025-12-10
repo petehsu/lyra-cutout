@@ -57,6 +57,14 @@ This tool leverages third-party AI services (Adobe Sensei, remove.bg). Please co
 - 🎯 **High Quality** - Powered by Adobe Sensei AI technology
 - 💰 **Free to Use** - Adobe mode requires no API key or registration
 
+## ✂️ Batch Cropping Tool (New)
+
+Lyra Cutout now features a powerful **Batch Cropping Module**, allowing you to process images locally without uploading:
+- **Batch Management**: Import multiple images at once and manage them in a list.
+- **Synced Adjustment**: Unique "Sync" feature—adjust one image's crop box (ratio/relative position), and all other images sync automatically. Perfect for e-commerce/ID photos.
+- **Professional Presets**: Built-in 1:1, 4:3, 16:9, 2.35:1 (Cinematic), and more.
+- **Privacy First**: Powered by browser Canvas technology, all cropping is done locally. Fast and data-saving.
+
 ---
 
 ## 🚀 Quick Start

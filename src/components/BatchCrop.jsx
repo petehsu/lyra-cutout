@@ -281,6 +281,7 @@ const BatchCrop = () => {
                             className={`list-item ${idx === selectedIndex ? 'active' : ''}`}
                             onClick={() => handleSelectImage(idx)}
                         >
+                            <span className="item-index">{idx + 1}</span>
                             <img src={img.url} alt="thumb" />
                             <button className="del-btn" onClick={(e) => handleDelete(idx, e)}>×</button>
                         </div>
