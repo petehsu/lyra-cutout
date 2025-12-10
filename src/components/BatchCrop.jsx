@@ -112,6 +112,13 @@ const BatchCrop = () => {
         });
     };
 
+    // 强制应用比例变化
+    useEffect(() => {
+        if (!currentImage || !cropperRef.current) return;
+        const cropper = cropperRef.current.cropper;
+        cropper.setAspectRatio(currentImage.aspectRatio);
+    }, [currentImage?.aspectRatio]);
+
     // Cropper 变化回调 (移动/缩放)
     const onCropEnd = () => {
         if (!currentImage || !cropperRef.current) return;
