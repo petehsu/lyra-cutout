@@ -230,7 +230,7 @@ export default function App() {
 
 
   return (
-    <div className={`app-shell ${activeTab === 'crop' ? 'full-width-mode' : ''}`}>
+    <div className="app-shell">
       {/* 左侧：主功能区 */}
       <div className="main-content">
         {/* 页头 */}
@@ -409,37 +409,61 @@ export default function App() {
         {activeTab === 'crop' && <BatchCrop />}
       </div>
 
-      {/* 右侧：品牌展示区 (仅在抠图模式显示) */}
-      {activeTab === 'remove' && (
-        <aside className="brand-panel">
-          <div className="brand-logo">
-            <img src={logoSvg} alt="Lyra Cutout Logo" />
-          </div>
-          <h2 className="brand-title">{BRAND}</h2>
-          <p className="brand-tagline">
-            {BRAND_TAGLINE}<br />
-            批量移除图片背景，一键导出透明 PNG
-          </p>
-          <div className="brand-features">
-            <div className="brand-feature">
-              <span className="brand-feature-icon">⚡</span>
-              <span>10 张并发，极速处理</span>
-            </div>
-            <div className="brand-feature">
-              <span className="brand-feature-icon">🎨</span>
-              <span>多引擎支持，自由选择</span>
-            </div>
-            <div className="brand-feature">
-              <span className="brand-feature-icon">📦</span>
-              <span>批量下载，保留原名</span>
-            </div>
-            <div className="brand-feature">
-              <span className="brand-feature-icon">🔒</span>
-              <span>本地处理，隐私安全</span>
-            </div>
-          </div>
-        </aside>
-      )}
+      {/* 右侧：品牌展示区 */}
+      <aside className="brand-panel">
+        <div className="brand-logo">
+          <img src={logoSvg} alt="Lyra Cutout Logo" />
+        </div>
+        <h2 className="brand-title">{BRAND}</h2>
+        <p className="brand-tagline">
+          {activeTab === 'remove' ? (
+            <>{BRAND_TAGLINE}<br />批量移除图片背景，一键导出透明 PNG</>
+          ) : (
+            <>批量图片裁剪工具<br />统一比例，关联调整，高效处理</>
+          )}
+        </p>
+        <div className="brand-features">
+          {activeTab === 'remove' ? (
+            <>
+              <div className="brand-feature">
+                <span className="brand-feature-icon">⚡</span>
+                <span>10 张并发，极速处理</span>
+              </div>
+              <div className="brand-feature">
+                <span className="brand-feature-icon">🎨</span>
+                <span>多引擎支持，自由选择</span>
+              </div>
+              <div className="brand-feature">
+                <span className="brand-feature-icon">📦</span>
+                <span>批量下载，保留原名</span>
+              </div>
+              <div className="brand-feature">
+                <span className="brand-feature-icon">🔒</span>
+                <span>本地处理，隐私安全</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="brand-feature">
+                <span className="brand-feature-icon">✂️</span>
+                <span>专业预设比例</span>
+              </div>
+              <div className="brand-feature">
+                <span className="brand-feature-icon">🔗</span>
+                <span>关联调整，同步所有图片</span>
+              </div>
+              <div className="brand-feature">
+                <span className="brand-feature-icon">📦</span>
+                <span>打包下载，保留原名</span>
+              </div>
+              <div className="brand-feature">
+                <span className="brand-feature-icon">🔒</span>
+                <span>浏览器本地处理</span>
+              </div>
+            </>
+          )}
+        </div>
+      </aside>
     </div>
   );
 }

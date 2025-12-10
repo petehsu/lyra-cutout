@@ -641,15 +641,17 @@ input::placeholder {
     justify-content: center;
   }
 }
+
 /* ========================================
    Batch Crop Module
    ======================================== */
 
 .crop-workspace {
   display: grid;
-  grid-template-columns: 120px 1fr 280px;
-  gap: 20px;
-  height: calc(100vh - 140px); /* 减去头部高度 */
+  grid-template-columns: 100px 1fr;
+  gap: 16px;
+  height: 500px;
+  /* 固定高度，与智能抠图模块协调 */
   width: 100%;
 }
 
@@ -697,7 +699,7 @@ input::placeholder {
   right: 4px;
   width: 20px;
   height: 20px;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   color: white;
   border: none;
   border-radius: 50%;
@@ -713,7 +715,8 @@ input::placeholder {
 }
 
 .crop-main {
-  background: #2a2a2a; /* 深色背景适合裁剪 */
+  background: #2a2a2a;
+  /* 深色背景适合裁剪 */
   border-radius: var(--radius-lg);
   overflow: hidden;
   position: relative;
@@ -761,12 +764,12 @@ input::placeholder {
 }
 
 .empty-state {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: var(--paper-2);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-2);
 }
 
 /* ========================================
@@ -809,12 +812,6 @@ input::placeholder {
   height: 3px;
   background: var(--accent-strong);
   border-radius: 2px;
-}
-
-/* Full width mode for cropping tool */
-.app-shell.full-width-mode {
-  grid-template-columns: 1fr !important;
-  max-width: 100%;
 }
 
 .item-index {

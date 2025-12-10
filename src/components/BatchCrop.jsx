@@ -267,89 +267,44 @@ const BatchCrop = () => {
     };
 
     return (
-        <div className="crop-workspace">
-            {/* 1. 左侧列表 */}
-            <div className="crop-sidebar">
-                <label className="btn-secondary add-btn">
-                    <span>+ 添加图片</span>
-                    <input type="file" multiple accept="image/*" onChange={handleUpload} hidden />
-                </label>
-                <div className="scroll-list">
-                    {images.map((img, idx) => (
-                        <div
-                            key={img.id}
-                            className={`list-item ${idx === selectedIndex ? 'active' : ''}`}
-                            onClick={() => handleSelectImage(idx)}
-                        >
-                            <span className="item-index">{idx + 1}</span>
-                            <img src={img.url} alt="thumb" />
-                            <button className="del-btn" onClick={(e) => handleDelete(idx, e)}>×</button>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* 2. 中间编辑区 */}
-            <div className="crop-main">
-                {currentImage ? (
-                    <Cropper
-                        key={currentImage.id}
-                        src={currentImage.url}
-                        style={{ height: '100%', width: '100%' }}
-                        aspectRatio={currentImage.aspectRatio} // 响应式比例
-                        guides={true}
-                        ref={cropperRef}
-                        viewMode={1} // 限制裁剪框在画布内
-                        dragMode="move"
-                        ready={onCropperReady}
-                        cropend={onCropEnd} // 只有手放开才同步，防止卡顿
-                    />
-                ) : (
-                    <div className="empty-state file-zone">
-                        <div className="file-zone-icon">✂️</div>
-                        <div className="file-zone-text">批量即时裁剪</div>
-                        <div className="file-zone-hint">从左侧添加图片开始</div>
-                        <label className="btn-primary" style={{ marginTop: 20, display: 'inline-block' }}>
-                            选择图片
-                            <input type="file" multiple accept="image/*" onChange={handleUpload} hidden />
-                        </label>
-                    </div>
-                )}
-            </div>
-
-            {/* 3. 右侧控制栏 */}
-            <div className="crop-controls control-panel">
+        <>
+            {/* 控制面板 */}
+            <div className="control-panel">
                 <div className="control-section">
-                    <h3 className="section-title">裁剪设置</h3>
-
-                    <div className="control-row">
-                        <label className="checkbox-label">
-                            <input
-                                type="checkbox"
-                                checked={isSync}
-                                onChange={(e) => setIsSync(e.target.checked)}
-                            />
-                            关联调整 (同步所有图片)
-                        </label>
-                    </div>
-
-                    <div className="ratio-grid">
-                        {ASPECT_RATIOS.map((r) => (
+                    {/* 裁剪比例设置 */}
+                    <div className="field">
+                        <span className="field-label">裁剪比例</span>
+                        <div className="mode-selector">
+                            {ASPECT_RATIOS.slice(0, 6).map((r) => (
+                                <button
+                                    key={r.label}
+                                    type="button"
+                                    className={`mode-btn ${((currentImage?.aspectRatio === r.value) || (Number.isNaN(currentImage?.aspectRatio) && Number.isNaN(r.value))) ? 'active' : ''}`}
+                                    onClick={() => handleAspectRatioChange(r.value)}
+                                >
+                                    {r.label}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="mode-selector" style={{ marginTop: 8 }}>
+                            {ASPECT_RATIOS.slice(6).map((r) => (
+                                <button
+                                    key={r.label}
+                                    type="button"
+                                    className={`mode-btn ${currentImage?.aspectRatio === r.value ? 'active' : ''}`}
+                                    onClick={() => handleAspectRatioChange(r.value)}
+                                >
+                                    {r.label}
+                                </button>
+                            ))}
                             <button
-                                key={r.label}
-                                className={`mode-btn ${((currentImage?.aspectRatio === r.value) || (Number.isNaN(currentImage?.aspectRatio) && Number.isNaN(r.value))) ? 'active' : ''}`}
-                                onClick={() => handleAspectRatioChange(r.value)}
+                                type="button"
+                                className="mode-btn"
+                                onClick={() => handleAspectRatioChange('REFERENCE')}
                             >
-                                {r.label}
+                                参考图片
                             </button>
-                        ))}
-
-                        <button
-                            className="mode-btn"
-                            onClick={() => handleAspectRatioChange('REFERENCE')}
-                        >
-                            参考图片...
-                        </button>
+                        </div>
                         <input
                             type="file"
                             id="ref-img-upload"
@@ -359,18 +314,79 @@ const BatchCrop = () => {
                         />
                     </div>
 
-                    <div className="actions" style={{ marginTop: 'auto' }}>
-                        <button
-                            className="btn-primary full-width"
-                            onClick={handleDownloadAll}
-                            disabled={images.length === 0 || isProcessing}
-                        >
-                            {isProcessing ? '处理中...' : '打包下载全部'}
-                        </button>
+                    {/* 选项 */}
+                    <div className="field">
+                        <label className="checkbox-label">
+                            <input
+                                type="checkbox"
+                                checked={isSync}
+                                onChange={(e) => setIsSync(e.target.checked)}
+                            />
+                            关联调整（同步所有图片的裁剪位置）
+                        </label>
                     </div>
                 </div>
             </div>
-        </div>
+
+            {/* 工作区 */}
+            <div className="crop-workspace">
+                {/* 左侧缩略图列表 */}
+                <div className="crop-sidebar">
+                    <label className="btn-secondary add-btn">
+                        <span>+ 添加</span>
+                        <input type="file" multiple accept="image/*" onChange={handleUpload} hidden />
+                    </label>
+                    <div className="scroll-list">
+                        {images.map((img, idx) => (
+                            <div
+                                key={img.id}
+                                className={`list-item ${idx === selectedIndex ? 'active' : ''}`}
+                                onClick={() => handleSelectImage(idx)}
+                            >
+                                <span className="item-index">{idx + 1}</span>
+                                <img src={img.url} alt="thumb" />
+                                <button className="del-btn" onClick={(e) => handleDelete(idx, e)}>×</button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 裁剪预览区 */}
+                <div className="crop-main">
+                    {currentImage ? (
+                        <Cropper
+                            key={currentImage.id}
+                            src={currentImage.url}
+                            style={{ height: '100%', width: '100%' }}
+                            aspectRatio={currentImage.aspectRatio}
+                            guides={true}
+                            ref={cropperRef}
+                            viewMode={1}
+                            dragMode="move"
+                            ready={onCropperReady}
+                            cropend={onCropEnd}
+                        />
+                    ) : (
+                        <div className="empty-state file-zone">
+                            <div className="file-zone-icon">✂️</div>
+                            <div className="file-zone-text">选择图片开始裁剪</div>
+                            <div className="file-zone-hint">点击左上角"添加"按钮</div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* 下载按钮 */}
+            <div className="actions" style={{ marginTop: 16 }}>
+                <button
+                    className="btn-primary"
+                    onClick={handleDownloadAll}
+                    disabled={images.length === 0 || isProcessing}
+                >
+                    {isProcessing ? '处理中...' : `📦 打包下载全部 (${images.length} 张)`}
+                </button>
+            </div>
+        </>
     );
 };
 
