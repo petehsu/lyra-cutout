@@ -1,5 +1,5 @@
 {
-    "rewrite": [
+    "rewrites": [
         {
             "source": "/adobe-token/(.*)",
             "destination": "/api/adobe-token"
