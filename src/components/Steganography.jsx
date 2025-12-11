@@ -56,27 +56,62 @@ const Steganography = () => {
 
     // ==================== 人脸检测 ====================
 
+    // 使用灰度直方图作为特征（更稳定）
     const extractFaceFeatures = async (imageData) => {
         const data = imageData.data;
+        const width = imageData.width;
+        const height = imageData.height;
+
+        // 将图像分成 4x4 = 16 个区域，每个区域计算 16 bin 直方图
+        // 总共 16 * 16 = 256 个特征值
         const features = [];
-        const step = Math.floor(data.length / 32);
-        for (let i = 0; i < 32; i++) {
-            let sum = 0;
-            for (let j = 0; j < step; j += 16) {
-                sum += data[i * step + j] || 0;
+        const regionW = Math.floor(width / 4);
+        const regionH = Math.floor(height / 4);
+
+        for (let ry = 0; ry < 4; ry++) {
+            for (let rx = 0; rx < 4; rx++) {
+                // 16 bin 直方图
+                const hist = new Array(16).fill(0);
+                let pixelCount = 0;
+
+                for (let y = ry * regionH; y < (ry + 1) * regionH; y++) {
+                    for (let x = rx * regionW; x < (rx + 1) * regionW; x++) {
+                        const idx = (y * width + x) * 4;
+                        // 灰度值
+                        const gray = data[idx]; // 已经是灰度
+                        const bin = Math.floor(gray / 16); // 0-15
+                        hist[Math.min(bin, 15)]++;
+                        pixelCount++;
+                    }
+                }
+
+                // 归一化到 0-255
+                for (let i = 0; i < 16; i++) {
+                    features.push(Math.round((hist[i] / pixelCount) * 255));
+                }
             }
-            features.push(sum % 256);
         }
+
         return new Uint8Array(features);
     };
 
+    // 使用余弦相似度比较（对幅度变化更鲁棒）
     const compareFaceFeatures = (template, current) => {
         if (template.length !== current.length) return 0;
-        let similarity = 0;
+
+        let dotProduct = 0;
+        let normA = 0;
+        let normB = 0;
+
         for (let i = 0; i < template.length; i++) {
-            similarity += Math.max(0, 1 - Math.abs(template[i] - current[i]) / 64);
+            dotProduct += template[i] * current[i];
+            normA += template[i] * template[i];
+            normB += current[i] * current[i];
         }
-        return similarity / template.length;
+
+        if (normA === 0 || normB === 0) return 0;
+
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
     };
 
     const startCamera = async () => {
@@ -150,13 +185,14 @@ const Steganography = () => {
         const current = await captureAndExtract();
         if (!current) return false;
         const similarity = compareFaceFeatures(faceTemplate, current);
-        if (similarity > 0.6) {
+        // 余弦相似度阈值 0.85 (85%)
+        if (similarity > 0.85) {
             setFaceVerified(true);
             stopCamera();
             setFaceStatus(`✅ 验证通过 (${(similarity * 100).toFixed(0)}%)`);
             return true;
         }
-        setFaceStatus(`❌ 验证失败 (${(similarity * 100).toFixed(0)}%)`);
+        setFaceStatus(`❌ 验证失败 (${(similarity * 100).toFixed(0)}%)，请保持相同姿势和光线`);
         return false;
     };
 
@@ -428,8 +464,8 @@ const Steganography = () => {
                     offset += templateLen;
 
                     const similarity = compareFaceFeatures(storedTemplate, faceTemplate);
-                    if (similarity < 0.6) {
-                        setDecodedMessage(`❌ 人脸验证失败 (${(similarity * 100).toFixed(0)}%)`);
+                    if (similarity < 0.85) {
+                        setDecodedMessage(`❌ 人脸验证失败 (${(similarity * 100).toFixed(0)}%)，需要 85% 以上`);
                         setIsProcessing(false);
                         return;
                     }
