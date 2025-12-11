@@ -97,13 +97,23 @@ const Steganography = () => {
 
     // 使用余弦相似度比较（对幅度变化更鲁棒）
     const compareFaceFeatures = (template, current) => {
-        if (template.length !== current.length) return 0;
+        // 调试：检查长度
+        console.log('人脸特征比较:', {
+            templateLen: template?.length,
+            currentLen: current?.length
+        });
+
+        if (!template || !current) return 0;
+
+        // 如果长度不匹配，尝试使用较短的长度
+        const len = Math.min(template.length, current.length);
+        if (len === 0) return 0;
 
         let dotProduct = 0;
         let normA = 0;
         let normB = 0;
 
-        for (let i = 0; i < template.length; i++) {
+        for (let i = 0; i < len; i++) {
             dotProduct += template[i] * current[i];
             normA += template[i] * template[i];
             normB += current[i] * current[i];
@@ -111,7 +121,9 @@ const Steganography = () => {
 
         if (normA === 0 || normB === 0) return 0;
 
-        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+        const similarity = dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+        console.log('余弦相似度:', similarity);
+        return similarity;
     };
 
     const startCamera = async () => {
@@ -185,8 +197,8 @@ const Steganography = () => {
         const current = await captureAndExtract();
         if (!current) return false;
         const similarity = compareFaceFeatures(faceTemplate, current);
-        // 余弦相似度阈值 0.85 (85%)
-        if (similarity > 0.85) {
+        // 余弦相似度阈值 0.70 (70%)
+        if (similarity > 0.70) {
             setFaceVerified(true);
             stopCamera();
             setFaceStatus(`✅ 验证通过 (${(similarity * 100).toFixed(0)}%)`);
@@ -464,8 +476,8 @@ const Steganography = () => {
                     offset += templateLen;
 
                     const similarity = compareFaceFeatures(storedTemplate, faceTemplate);
-                    if (similarity < 0.85) {
-                        setDecodedMessage(`❌ 人脸验证失败 (${(similarity * 100).toFixed(0)}%)，需要 85% 以上`);
+                    if (similarity < 0.70) {
+                        setDecodedMessage(`❌ 人脸验证失败 (${(similarity * 100).toFixed(0)}%)，需要 70% 以上`);
                         setIsProcessing(false);
                         return;
                     }
