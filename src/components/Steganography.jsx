@@ -82,16 +82,30 @@ const Steganography = () => {
     const startCamera = async () => {
         try {
             setFaceStatus('正在启动摄像头...');
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 320, height: 240 } });
+
+            // 先显示摄像头容器
+            setShowCamera(true);
+
+            // 获取视频流
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'user', width: 320, height: 240 }
+            });
             streamRef.current = stream;
+
+            // 等待下一个渲染周期，确保 video 元素已挂载
+            await new Promise(resolve => setTimeout(resolve, 100));
+
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
-                await videoRef.current.play();
+                videoRef.current.onloadedmetadata = () => {
+                    videoRef.current.play().catch(console.error);
+                };
             }
-            setShowCamera(true);
+
             setFaceStatus('请对准摄像头，点击拍照');
         } catch (err) {
             setFaceStatus('无法访问摄像头: ' + err.message);
+            setShowCamera(false);
         }
     };
 
